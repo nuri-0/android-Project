@@ -13,11 +13,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-
 public class MainActivity extends AppCompatActivity {
     /* constants */
     private static final int POLL_INTERVAL = 300;
@@ -136,20 +131,6 @@ public class MainActivity extends AppCompatActivity {
         bar.setProgress((int)signalEMA);
         Log.d("SONUND", String.valueOf(signalEMA));
         tv_noice.setText(signalEMA+"dB");
-
-        // file
-        try{
-            BufferedWriter bw = new BufferedWriter(new FileWriter(getFilesDir() + "noise_check.txt", true));
-            bw.write(signalEMA+"dB\n");
-            bw.close();
-            Toast.makeText(getApplicationContext(), "save!", Toast.LENGTH_SHORT).show();
-        }
-        catch (IOException e){
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-
-
     }
 
     private void callForHelp(double signalEMA) {
