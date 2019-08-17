@@ -15,7 +15,9 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     /* constants */
-    private static final int POLL_INTERVAL = 300;
+    private static final int POLL_INTERVAL = 1000;
+    public static double sum = 0.0;
+    public static int cnt = 0;
 
     /** running state **/
     private boolean mRunning = false;
@@ -29,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private Handler mHandler = new Handler();
 
     /* References to view elements */
-    private TextView mStatusView,tv_noice;
+    private TextView mStatusView,tv_noice,noise_avg;
 
     /* sound data source */
     private DetectNoise mSensor;
@@ -71,6 +73,8 @@ public class MainActivity extends AppCompatActivity {
         mSensor = new DetectNoise();
         PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
         mWakeLock = pm.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, "NoiseAlert:tag");
+
+        noise_avg=(TextView)findViewById(R.id.noise_avg);
     }
     @Override
     public void onResume() {
@@ -126,11 +130,20 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void updateDisplay(String status, double signalEMA) {
+    public void updateDisplay(String status, double signalEMA) {
         mStatusView.setText(status);
         bar.setProgress((int)signalEMA);
         Log.d("SONUND", String.valueOf(signalEMA));
         tv_noice.setText(signalEMA+"dB");
+
+        /*int size = values.length;
+        for(int i=0; i<size; i++){
+            values[i] = signalEMA;
+            */
+        MainActivity.sum += signalEMA;
+        MainActivity.cnt ++;
+        double avg = sum/cnt;
+        noise_avg.setText(cnt+"dB");
     }
 
     private void callForHelp(double signalEMA) {
@@ -142,5 +155,5 @@ public class MainActivity extends AppCompatActivity {
         Log.d("SONUND", String.valueOf(signalEMA));
         tv_noice.setText(signalEMA+"dB");
     }
-
 };
+
