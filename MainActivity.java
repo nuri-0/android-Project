@@ -16,8 +16,8 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity {
     /* constants */
     private static final int POLL_INTERVAL = 1000;
-    public static double sum = 0.0;
-    public static int cnt = 0;
+    public static int noise_sum = 0;
+    public static int cnt = -1;
 
     /** running state **/
     private boolean mRunning = false;
@@ -134,16 +134,18 @@ public class MainActivity extends AppCompatActivity {
         mStatusView.setText(status);
         bar.setProgress((int)signalEMA);
         Log.d("SONUND", String.valueOf(signalEMA));
-        tv_noice.setText(signalEMA+"dB");
+        tv_noice.setText((int)signalEMA+"dB");
 
-        /*int size = values.length;
-        for(int i=0; i<size; i++){
-            values[i] = signalEMA;
-            */
-        MainActivity.sum += signalEMA;
         MainActivity.cnt ++;
-        double avg = sum/cnt;
-        noise_avg.setText(cnt+"dB");
+        if(signalEMA <= -2147483648) noise_sum -= (-2147483648); // why is that value detected? T^T
+
+        noise_sum+=(int)signalEMA;
+        double avg = noise_sum/(double)cnt;
+        noise_avg.setText(noise_sum+"dB, "+avg+"dB");
+
+        if (signalEMA>avg){
+            Toast.makeText(getApplicationContext(),"Over",Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void callForHelp(double signalEMA) {
